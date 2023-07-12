@@ -29,7 +29,6 @@ dependencies {
     implementation(Ktor2.Server.auth)
     implementation(Ktor2.Server.contentNegotiation)
     implementation(Ktor2.Server.statusPages)
-    implementation(Ktor2.Server.metricsMicrometer)
     implementation(Ktor2.Server.defaultHeaders)
     implementation(Ktor2.Server.cors)
     implementation(TmsKtorTokenSupport.tokenXValidation)
@@ -40,7 +39,8 @@ dependencies {
     implementation(Logstash.logbackEncoder)
     implementation(Logback.classic)
     implementation(Ktor2.Serialization.kotlinX)
-    implementation(Micrometer.registryPrometheus)
+    implementation(Prometheus.common)
+    implementation(Prometheus.hotspot)
     implementation(Prometheus.logback)
     implementation("io.ktor:ktor-client-encoding:2.3.0")
 

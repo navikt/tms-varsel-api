@@ -24,8 +24,8 @@ spec:
     path: /tms-varsel-api/internal/isReady
     initialDelay: 10
   prometheus:
+    path: /metrics
     enabled: true
-    path: /tms-varsel-api/metrics
   secureLogs:
     enabled: true
   replicas:

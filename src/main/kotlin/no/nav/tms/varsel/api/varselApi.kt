@@ -6,7 +6,6 @@ import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.application.*
 import io.ktor.server.application.hooks.*
 import io.ktor.server.auth.*
-import io.ktor.server.metrics.micrometer.*
 import io.ktor.server.plugins.*
 import io.ktor.server.plugins.contentnegotiation.*
 import io.ktor.server.plugins.cors.routing.*
@@ -15,8 +14,6 @@ import io.ktor.server.plugins.statuspages.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
-import io.micrometer.prometheus.PrometheusConfig
-import io.micrometer.prometheus.PrometheusMeterRegistry
 import kotlinx.serialization.json.Json
 import mu.KotlinLogging
 import no.nav.tms.token.support.authentication.installer.installAuthenticators
@@ -25,6 +22,7 @@ import no.nav.tms.token.support.idporten.sidecar.user.IdportenUserFactory
 import no.nav.tms.token.support.tokendings.exchange.TokenXHeader
 import no.nav.tms.token.support.tokenx.validation.TokenXAuthenticator
 import no.nav.tms.token.support.tokenx.validation.user.TokenXUserFactory
+import no.nav.tms.varsel.api.metrics.ApiResponseMetrics
 import no.nav.tms.varsel.api.varsel.VarselConsumer
 import no.nav.tms.varsel.api.varsel.varsel
 import no.nav.tms.varsel.api.varsel.varselbjelle
@@ -49,11 +47,11 @@ fun Application.varselApi(
         }
     }
 ) {
-    val collectorRegistry = PrometheusMeterRegistry(PrometheusConfig.DEFAULT)
     val securelog = KotlinLogging.logger("secureLog")
 
     install(DefaultHeaders)
     install(RouteByAuthenticationMethod)
+    install(ApiResponseMetrics)
 
     authInstaller()
 
@@ -75,13 +73,9 @@ fun Application.varselApi(
         json(jsonConfig())
     }
 
-    install(MicrometerMetrics) {
-        registry = collectorRegistry
-    }
-
     routing {
         route(ROOT_PATH) {
-            meta(collectorRegistry)
+            meta()
             authenticate {
                 route("/idporten") {
                     varsel(varselConsumer) { IdportenUserFactory.createIdportenUser(call).tokenString }
