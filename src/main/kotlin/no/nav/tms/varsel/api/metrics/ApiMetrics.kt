@@ -5,31 +5,32 @@ import io.ktor.server.application.*
 import io.ktor.server.application.hooks.*
 import io.ktor.server.request.*
 import io.prometheus.client.Counter
+import mu.KotlinLogging
 
-//ResponseSent
+
+private val log = KotlinLogging.logger {  }
 
 val ApiResponseMetrics = createApplicationPlugin(name = "ApiResponseMetrics") {
     on(ResponseSent) { call ->
         val status = call.response.status()
+
+        log.debug { "Legger til metriks med status $status" }
         val route = call.request.uri
         //legge til sensitivitet?
         val tag = status.resolveTag()
         ApiMetricsCounter.countApiCall(status, route, tag)
     }
-
-
 }
-
 
 object ApiMetricsCounter {
     const val COUNTER_NAME = "tms_api_call"
-
     private val counter = Counter.build()
         .name(COUNTER_NAME)
         .help("Kall til team minside sine api-er")
         .labelNames("route", "status", "tag")
         .register()
     fun countApiCall(statusCode: HttpStatusCode?, route: String, tag: String) {
+        log.debug { "Adding apimetrics count" }
         counter.labels("${statusCode?.value ?: "NAN"}", route, tag)
     }
 }
