@@ -28,6 +28,7 @@ import no.nav.tms.varsel.api.varsel.varsel
 import no.nav.tms.varsel.api.varsel.varselbjelle
 
 private const val ROOT_PATH = "/tms-varsel-api"
+private val log = KotlinLogging.logger {  }
 
 fun Application.varselApi(
     corsAllowedOrigins: String,
@@ -108,6 +109,7 @@ fun jsonConfig(): Json {
 
 val RouteByAuthenticationMethod = createApplicationPlugin(name = "RouteByAuthenticationMethod") {
     on(CallSetup) { call ->
+        log.debug { "mottok api-kall" }
         val metaroutes = listOf("/metrics", "/internal/isReady", "/internal/isAlive")
         val originalUri = call.request.uri
         if (call.request.headers.contains(TokenXHeader.Authorization)) {
