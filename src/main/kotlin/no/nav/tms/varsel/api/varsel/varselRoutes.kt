@@ -10,31 +10,25 @@ import io.ktor.server.routing.get
 import io.ktor.server.routing.post
 import io.ktor.util.pipeline.PipelineContext
 import kotlinx.serialization.Serializable
-import mu.KotlinLogging
 
 
 fun Route.varsel(
     varselConsumer: VarselConsumer,
     tokenResolver: PipelineContext<Unit, ApplicationCall>.() -> String
 ) {
-    val log = KotlinLogging.logger {  }
-
     get("inaktive") {
-        log.debug { "mottok api-kall inaktive" }
         val inaktiveVarsler = varselConsumer.getInaktiveVarsler(tokenResolver())
 
         call.respond(HttpStatusCode.OK, inaktiveVarsler)
     }
 
     get("aktive") {
-        log.debug { "mottok api-kall aktive" }
         val aktiveVarsler = varselConsumer.getAktiveVarsler(tokenResolver())
 
         call.respond(HttpStatusCode.OK, aktiveVarsler)
     }
 
     get("antall/aktive") {
-        log.debug { "mottok api-kall antall" }
         val antallAktive = varselConsumer.getAktiveVarsler(tokenResolver()).let {
             AntallVarsler(
                 beskjeder = it.beskjeder.size,
@@ -47,7 +41,6 @@ fun Route.varsel(
     }
 
     post("beskjed/inaktiver") {
-        log.debug { "mottok api-kall inaktiver" }
         varselConsumer.postInaktiver(varselId = call.varselId(), userToken = tokenResolver())
         call.respond(HttpStatusCode.OK)
     }
