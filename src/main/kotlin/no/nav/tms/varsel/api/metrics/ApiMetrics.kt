@@ -8,12 +8,10 @@ import io.prometheus.client.Counter
 import mu.KotlinLogging
 
 
-private val log = KotlinLogging.logger {  }
-
 val ApiResponseMetrics = createApplicationPlugin(name = "ApiResponseMetrics") {
     on(ResponseSent) { call ->
         val status = call.response.status()
-
+        val log = KotlinLogging.logger {  }
         log.debug { "Legger til metriks med status $status" }
         val route = call.request.uri
         //legge til sensitivitet?
@@ -23,6 +21,7 @@ val ApiResponseMetrics = createApplicationPlugin(name = "ApiResponseMetrics") {
 }
 
 object ApiMetricsCounter {
+    private val log = KotlinLogging.logger {  }
     const val COUNTER_NAME = "tms_api_call"
     private val counter = Counter.build()
         .name(COUNTER_NAME)
