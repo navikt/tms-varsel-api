@@ -60,7 +60,6 @@ fun Application.varselApi(
     install(StatusPages) {
         exception<Throwable> { call, cause ->
             securelog.warn { "Kall til ${call.request.uri} feilet: ${cause.message}" }
-            securelog.warn { cause.stackTrace }
             call.respond(HttpStatusCode.InternalServerError)
         }
     }
@@ -77,6 +76,7 @@ fun Application.varselApi(
 
     install(MicrometerMetrics) {
         registry = collectorRegistry
+
     }
 
     routing {
@@ -113,6 +113,9 @@ fun jsonConfig(): Json {
 }
 
 val RouteByAuthenticationMethod = createApplicationPlugin(name = "RouteByAuthenticationMethod") {
+    val log = KotlinLogging.logger {  }
+    log.info { "Tester logg med nivå info" }
+    log.debug { "Tester logg med nivå debug" }
     on(CallSetup) { call ->
         val metaroutes = listOf("/metrics", "/internal/isReady", "/internal/isAlive")
         val originalUri = call.request.uri

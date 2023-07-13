@@ -10,25 +10,30 @@ import io.ktor.server.routing.get
 import io.ktor.server.routing.post
 import io.ktor.util.pipeline.PipelineContext
 import kotlinx.serialization.Serializable
+import mu.KotlinLogging
 
 
 fun Route.varsel(
     varselConsumer: VarselConsumer,
     tokenResolver: PipelineContext<Unit, ApplicationCall>.() -> String
 ) {
+    val log = KotlinLogging.logger {  }
+
     get("inaktive") {
         val inaktiveVarsler = varselConsumer.getInaktiveVarsler(tokenResolver())
-
         call.respond(HttpStatusCode.OK, inaktiveVarsler)
     }
 
     get("aktive") {
-        val aktiveVarsler = varselConsumer.getAktiveVarsler(tokenResolver())
+        log.info { "Tester logging fra route" }
 
+        val aktiveVarsler = varselConsumer.getAktiveVarsler(tokenResolver())
         call.respond(HttpStatusCode.OK, aktiveVarsler)
     }
 
     get("antall/aktive") {
+        log.info { "Tester logging fra route aktive" }
+
         val antallAktive = varselConsumer.getAktiveVarsler(tokenResolver()).let {
             AntallVarsler(
                 beskjeder = it.beskjeder.size,
