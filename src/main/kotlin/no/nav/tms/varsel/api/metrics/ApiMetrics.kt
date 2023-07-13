@@ -26,11 +26,11 @@ object ApiMetricsCounter {
     private val counter = Counter.build()
         .name(COUNTER_NAME)
         .help("Kall til team minside sine api-er")
-        .labelNames("route", "status", "tag")
+        .labelNames("route", "status", "statusgroup")
         .register()
     fun countApiCall(statusCode: HttpStatusCode?, route: String, tag: String) {
         log.debug { "Adding apimetrics count" }
-        counter.labels("${statusCode?.value ?: "NAN"}", route, tag)
+        counter.labels("${statusCode?.value ?: "NAN"}", route, tag).inc()
     }
 }
 
