@@ -18,6 +18,7 @@ class VarselConsumer(
     private val varselAuthorityClientId: String,
     private val tokendingsService: TokendingsService
 ) {
+
     suspend fun getAktiveVarsler(userToken: String, preferertSpraak: String?): AktiveVarsler {
         return getVarsler(userToken, "/varsel/sammendrag/aktive", preferertSpraak = preferertSpraak)
             .let (AktiveVarsler::fromVarsler)
