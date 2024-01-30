@@ -45,7 +45,6 @@ fun Application.varselApi(
         }
     }
 ) {
-
     val securelog = KotlinLogging.logger("secureLog")
 
     install(DefaultHeaders)
