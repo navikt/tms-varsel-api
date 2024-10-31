@@ -14,7 +14,8 @@ object Kotlin: KotlinDefaults
 object KotlinLogging: KotlinLoggingDefaults
 object Kotlinx: KotlinxDefaults
 object KotliQuery: KotliQueryDefaults
-object Ktor {
+object
+Ktor {
     object Server: KtorDefaults.ServerDefaults
     object Client: KtorDefaults.ClientDefaults
     object Serialization: KtorDefaults.SerializationDefaults

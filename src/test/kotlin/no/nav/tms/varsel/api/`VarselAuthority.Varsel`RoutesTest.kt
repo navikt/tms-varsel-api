@@ -56,7 +56,7 @@ class VarselRoutesTest {
 
         mockVarselApi(
             varselConsumer = setupVarselConsumer(),
-            authMockInstaller = installAuthenticatedMock(LevelOfAssurance.LEVEL_4)
+            authMockInstaller = installAuthenticatedMock(LevelOfAssurance.HIGH)
         )
 
         val response = client.get("/alle")
@@ -83,7 +83,7 @@ class VarselRoutesTest {
         setupVarselAuthority(inaktiveVarslerFromEventHandler = varsler)
         mockVarselApi(
             varselConsumer = setupVarselConsumer(),
-            authMockInstaller = installAuthenticatedMock(LevelOfAssurance.LEVEL_4)
+            authMockInstaller = installAuthenticatedMock(LevelOfAssurance.HIGH)
         )
 
         val response = client.get("/inaktive")
@@ -127,7 +127,7 @@ class VarselRoutesTest {
         setupVarselAuthority(aktiveVarslerFromEventHandler = varsler)
         mockVarselApi(
             varselConsumer = setupVarselConsumer(),
-            authMockInstaller = installAuthenticatedMock(LevelOfAssurance.LEVEL_4)
+            authMockInstaller = installAuthenticatedMock(LevelOfAssurance.HIGH)
         )
 
         val response = client.get("/aktive")
@@ -154,13 +154,13 @@ class VarselRoutesTest {
     }
 
     @Test
-    fun `Henter aktive varsler for nivå 3`() = varselRoutesTest { client ->
+    fun `Henter aktive varsler for loa substantial`() = varselRoutesTest { client ->
         setupVarselAuthority(VarselTestData.varsel(type = VarselType.beskjed, isMasked = true),
             VarselTestData.varsel(type = VarselType.oppgave, isMasked = true)
         )
         mockVarselApi(
             varselConsumer = setupVarselConsumer(),
-            authMockInstaller = installAuthenticatedMock(LevelOfAssurance.LEVEL_3)
+            authMockInstaller = installAuthenticatedMock(LevelOfAssurance.SUBSTANTIAL)
         )
 
         val response = client.get("/aktive")
@@ -195,7 +195,7 @@ class VarselRoutesTest {
         setupVarselAuthority(aktiveVarslerFromEventHandler = varsler)
         mockVarselApi(
             varselConsumer = setupVarselConsumer(),
-            authMockInstaller = installAuthenticatedMock(LevelOfAssurance.LEVEL_4)
+            authMockInstaller = installAuthenticatedMock(LevelOfAssurance.HIGH)
         )
 
         val response = client.get("/antall/aktive")
@@ -230,8 +230,9 @@ class VarselRoutesTest {
 
         mockVarselApi(
             varselConsumer = setupVarselConsumer(),
-            authMockInstaller = installAuthenticatedMock(LevelOfAssurance.LEVEL_4)
+            authMockInstaller = installAuthenticatedMock(LevelOfAssurance.HIGH)
         )
+
         client.post("/beskjed/inaktiver") {
             header(HttpHeaders.ContentType, ContentType.Application.Json)
             setBody("""{"varselId": "$expeectedEventId"}""")
@@ -249,7 +250,7 @@ class VarselRoutesTest {
         setupVarselAuthority(aktiveVarslerFromEventHandler = listOf(beskjed), inaktiveVarslerFromEventHandler = listOf(oppgave))
         mockVarselApi(
             varselConsumer = setupVarselConsumer(),
-            authMockInstaller = installAuthenticatedMock(LevelOfAssurance.LEVEL_4)
+            authMockInstaller = installAuthenticatedMock(LevelOfAssurance.HIGH)
         )
 
         val aktiveVarsler: AktiveVarsler = client.get("/aktive").bodyFromJson()
@@ -304,7 +305,7 @@ class VarselRoutesTest {
 
         mockVarselApi(
             varselConsumer = setupVarselConsumer(),
-            authMockInstaller = installAuthenticatedMock(LevelOfAssurance.LEVEL_4)
+            authMockInstaller = installAuthenticatedMock(LevelOfAssurance.HIGH)
         )
         client.post("/beskjed/inaktiver") {
             header(HttpHeaders.ContentType, ContentType.Application.Json)
@@ -320,7 +321,7 @@ class VarselRoutesTest {
             setupVarselAuthority(expectedSpraakkodeParam = "en")
             mockVarselApi(
                 varselConsumer = setupVarselConsumer(),
-                authMockInstaller = installAuthenticatedMock(LevelOfAssurance.LEVEL_4)
+                authMockInstaller = installAuthenticatedMock(LevelOfAssurance.HIGH)
             )
 
             client.get("/aktive?preferert_spraak=en").apply {
