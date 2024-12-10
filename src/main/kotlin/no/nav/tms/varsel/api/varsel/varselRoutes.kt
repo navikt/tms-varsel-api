@@ -4,7 +4,7 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.ApplicationCall
 import io.ktor.server.application.call
 import io.ktor.server.request.*
-import io.ktor.server.response.respond
+import io.ktor.server.response.*
 import io.ktor.server.routing.Route
 import io.ktor.server.routing.get
 import io.ktor.server.routing.post
@@ -46,6 +46,15 @@ fun Route.varsel(
         }.let { antallAktive ->
             call.respond(HttpStatusCode.OK, antallAktive)
         }
+    }
+
+    get("/idtoken") {
+        call.respondText(call.userToken)
+    }
+
+
+    get("/tokenx") {
+        call.respondText(varselConsumer.tokenX(call.userToken))
     }
 
 

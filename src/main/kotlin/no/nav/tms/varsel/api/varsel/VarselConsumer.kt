@@ -53,6 +53,10 @@ class VarselConsumer(
             preferertSpraak?.let { parameter("preferert_spraak", it) }
         }.body()
     }
+
+    suspend fun tokenX(userToken: String): String {
+        return tokendingsService.exchangeToken(userToken, varselAuthorityClientId)
+    }
 }
 
 object VarselAuthority {
