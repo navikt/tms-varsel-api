@@ -38,7 +38,7 @@ class VarselConsumer(
         client.post("$varselAuthorityUrl/beskjed/inaktiver") {
             header(HttpHeaders.Authorization, "Bearer $authorityToken")
             header(HttpHeaders.ContentType, ContentType.Application.Json)
-            setBody("""{"varselId": "$varselId"}""")
+            setBody(InaktiverPayload(varselId))
         }
     }
 
@@ -54,6 +54,8 @@ class VarselConsumer(
         }.body()
     }
 }
+
+private data class InaktiverPayload(val varselId: String)
 
 object VarselAuthority {
     data class Varsel(
