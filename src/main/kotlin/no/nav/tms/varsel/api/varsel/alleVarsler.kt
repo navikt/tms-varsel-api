@@ -18,7 +18,6 @@ data class Varsel(
     companion object {
         fun fromVarsel(varsel: VarselAuthority.Varsel): Varsel {
             val isMasked = varsel.innhold == null
-            val isInaktivertOppgave = varsel.type == VarselType.oppgave && !varsel.aktiv
 
             return Varsel(
                 eventId = varsel.varselId,
