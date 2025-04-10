@@ -26,7 +26,7 @@ data class Varsel(
                 isMasked = isMasked,
                 spraakkode = varsel.innhold?.spraakkode,
                 tekst = varsel.innhold?.tekst,
-                link = if(isInaktivertOppgave) null else varsel.innhold?.link,
+                link =  varsel.innhold?.link,
                 eksternVarslingSendt = varsel.eksternVarslingSendt,
                 eksternVarslingKanaler = varsel.eksternVarslingKanaler,
                 type = if (varsel.type == VarselType.oppgave) VarselType.oppgave else VarselType.beskjed,
