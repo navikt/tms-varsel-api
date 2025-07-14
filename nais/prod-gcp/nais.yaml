@@ -39,6 +39,9 @@ spec:
         - application: "*"
           namespace: personbruker
           cluster: prod-gcp
+        - application: "*"
+          namespace: navno
+          cluster: prod-gcp
     outbound:
       rules:
         - application: tms-varsel-authority
