@@ -44,6 +44,7 @@ dependencies {
     implementation(Logstash.logbackEncoder)
     implementation(KtorClientEncoding.clientEncoding)
     implementation(TmsCommonLib.metrics)
+    implementation(TmsCommonLib.teamLogger)
     implementation(TmsCommonLib.utils)
 
     testImplementation(JunitPlatform.launcher)

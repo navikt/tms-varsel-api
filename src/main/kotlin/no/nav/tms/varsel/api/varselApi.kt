@@ -18,6 +18,7 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.github.oshai.kotlinlogging.KotlinLogging
 import io.ktor.serialization.jackson.*
+import no.nav.tms.common.logging.TeamLogs
 import no.nav.tms.common.metrics.installTmsMicrometerMetrics
 import no.nav.tms.token.support.idporten.sidecar.LevelOfAssurance
 import no.nav.tms.token.support.idporten.sidecar.idPorten
@@ -42,7 +43,8 @@ fun Application.varselApi(
         }
     }
 ) {
-    val securelog = KotlinLogging.logger("secureLog")
+    val log = KotlinLogging.logger { }
+    val teamLog = TeamLogs.logger { }
 
     install(DefaultHeaders)
 
@@ -50,7 +52,8 @@ fun Application.varselApi(
 
     install(StatusPages) {
         exception<Throwable> { call, cause ->
-            securelog.warn(cause) { "Kall til ${call.request.uri} feilet: ${cause.message}" }
+            log.warn { "Kall til ${call.request.uri} feilet]." }
+            teamLog.warn(cause) { "Kall til ${call.request.uri} feilet: ${cause.message}" }
             call.respond(HttpStatusCode.InternalServerError)
         }
     }
