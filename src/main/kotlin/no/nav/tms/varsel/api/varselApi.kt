@@ -20,10 +20,9 @@ import io.github.oshai.kotlinlogging.KotlinLogging
 import io.ktor.serialization.jackson.*
 import no.nav.tms.common.logging.TeamLogs
 import no.nav.tms.common.metrics.installTmsMicrometerMetrics
-import no.nav.tms.token.support.idporten.sidecar.LevelOfAssurance
-import no.nav.tms.token.support.idporten.sidecar.idPorten
-import no.nav.tms.token.support.tokenx.validation.TokenXAuthenticator
-import no.nav.tms.token.support.tokenx.validation.tokenX
+import no.nav.tms.token.support.user.token.verification.LevelOfAssurance
+import no.nav.tms.token.support.user.token.verification.UserPrincipal
+import no.nav.tms.token.support.user.token.verification.userToken
 import no.nav.tms.varsel.api.varsel.*
 
 fun Application.varselApi(
@@ -32,13 +31,8 @@ fun Application.varselApi(
     varselConsumer: VarselConsumer,
     authInstaller: Application.() -> Unit = {
         authentication {
-            idPorten {
-                setAsDefault = true
-                levelOfAssurance = LevelOfAssurance.SUBSTANTIAL
-            }
-            tokenX {
-                setAsDefault = false
-                levelOfAssurance = TokenXLoa.SUBSTANTIAL
+            userToken {
+                levelOfAssurance = LevelOfAssurance.Substantial
             }
         }
     }
@@ -74,12 +68,11 @@ fun Application.varselApi(
     }
 
     routing {
+
         metaRoutes()
         authenticate {
             varsel(varselConsumer)
             varselbjelle(varselConsumer)
-        }
-        authenticate(TokenXAuthenticator.name) {
             bjellevarsler(varselConsumer)
             alleVarsler(varselConsumer)
             antallAktiveVarsler(varselConsumer)
@@ -90,13 +83,15 @@ fun Application.varselApi(
     configureShutdownHook(httpClient)
 }
 
-typealias TokenXLoa = no.nav.tms.token.support.tokenx.validation.LevelOfAssurance
-
 private fun Application.configureShutdownHook(httpClient: HttpClient) {
     monitor.subscribe(ApplicationStopping) {
         httpClient.close()
     }
 }
+
+val ApplicationCall.user get() = principal<UserPrincipal>()
+    ?: throw IllegalStateException("Fant ikke UserPrincipal i context")
+
 
 fun ObjectMapper.jsonConfig(): ObjectMapper {
     registerKotlinModule()

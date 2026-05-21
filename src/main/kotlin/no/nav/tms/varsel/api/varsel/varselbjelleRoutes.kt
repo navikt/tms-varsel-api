@@ -1,22 +1,16 @@
 package no.nav.tms.varsel.api.varsel
 
 import io.ktor.http.*
-import io.ktor.server.application.ApplicationCall
-import io.ktor.server.application.call
 import io.ktor.server.request.*
 import io.ktor.server.response.respond
 import io.ktor.server.routing.*
-import io.ktor.util.pipeline.PipelineContext
-import no.nav.tms.token.support.idporten.sidecar.user.IdportenUser
-import no.nav.tms.token.support.idporten.sidecar.user.IdportenUserFactory
-import no.nav.tms.token.support.tokenx.validation.user.TokenXUser
-import no.nav.tms.token.support.tokenx.validation.user.TokenXUserFactory
+import no.nav.tms.varsel.api.user
 
 fun Route.varselbjelle(varselConsumer: VarselConsumer) {
     route("/varselbjelle") {
         get("/varsler") {
             varselConsumer.getVarselbjelleVarsler(
-                userToken = idportenUser.tokenString,
+                userToken = call.user.accessToken,
                 preferertSpraak = call.request.preferertSpraak
             ).let {
                 call.respond(HttpStatusCode.OK, it)
@@ -28,7 +22,7 @@ fun Route.varselbjelle(varselConsumer: VarselConsumer) {
 fun Route.bjellevarsler(varselConsumer: VarselConsumer) {
     get("/bjellevarsler") {
         varselConsumer.getVarselbjelleVarsler(
-            userToken = tokenxUser.tokenString,
+            userToken = call.user.accessToken,
             preferertSpraak = call.request.preferertSpraak
         ).let {
             call.respond(HttpStatusCode.OK, it)
@@ -37,9 +31,3 @@ fun Route.bjellevarsler(varselConsumer: VarselConsumer) {
 }
 
 private val ApplicationRequest.preferertSpraak get() = queryParameters["preferert_spraak"]?.lowercase()
-
-private val RoutingContext.idportenUser: IdportenUser
-    get() = IdportenUserFactory.createIdportenUser(this.call)
-
-private val RoutingContext.tokenxUser: TokenXUser
-    get() = TokenXUserFactory.createTokenXUser(this.call)
