@@ -19,6 +19,7 @@ fun main() {
             }
         },
         module = {
+            rootPath = "tms-varsel-api"
             varselApi(
                 corsAllowedOrigins = environment.corsAllowedOrigins,
                 httpClient = httpClient,
