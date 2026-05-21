@@ -68,7 +68,6 @@ fun Application.varselApi(
     }
 
     routing {
-
         metaRoutes()
         authenticate {
             varsel(varselConsumer)
