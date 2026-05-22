@@ -4,14 +4,14 @@ import io.ktor.client.HttpClient
 import io.ktor.client.call.*
 import io.ktor.client.request.*
 import io.ktor.http.*
-import no.nav.tms.token.support.tokendings.exchange.TokendingsService
+import no.nav.tms.token.support.user.token.exchange.UserTokenExchanger
 import java.time.ZonedDateTime
 
 class VarselConsumer(
     private val client: HttpClient,
     private val varselAuthorityUrl: String,
     private val varselAuthorityClientId: String,
-    private val tokendingsService: TokendingsService
+    private val tokenExchanger: UserTokenExchanger
 ) {
     suspend fun getAktiveVarsler(userToken: String, preferertSpraak: String?): AktiveVarsler {
         return getVarsler(userToken, "/varsel/sammendrag/aktive", preferertSpraak = preferertSpraak)
@@ -33,7 +33,7 @@ class VarselConsumer(
             .let(AlleVarsler::fromVarsler)
     }
     suspend fun postInaktiver(userToken: String, varselId: String) {
-        val authorityToken = tokendingsService.exchangeToken(userToken, varselAuthorityClientId)
+        val authorityToken = tokenExchanger.exchangeToken(userToken, varselAuthorityClientId)
 
         client.post("$varselAuthorityUrl/beskjed/inaktiver") {
             header(HttpHeaders.Authorization, "Bearer $authorityToken")
@@ -43,7 +43,7 @@ class VarselConsumer(
     }
 
     private suspend fun getVarsler(userToken: String, path: String, preferertSpraak: String? = null): List<VarselAuthority.Varsel> {
-        val authorityToken = tokendingsService.exchangeToken(userToken, targetApp = varselAuthorityClientId)
+        val authorityToken = tokenExchanger.exchangeToken(userToken, targetApp = varselAuthorityClientId)
 
         return client.request {
             url("$varselAuthorityUrl$path")

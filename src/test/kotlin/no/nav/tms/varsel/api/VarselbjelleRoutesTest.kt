@@ -7,7 +7,7 @@ import io.ktor.client.request.get
 import io.ktor.client.statement.*
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.testing.testApplication
-import no.nav.tms.token.support.idporten.sidecar.mock.LevelOfAssurance
+import no.nav.tms.token.support.user.token.verification.LevelOfAssurance
 import no.nav.tms.varsel.api.varsel.VarselType
 import no.nav.tms.varsel.api.varsel.VarselbjelleVarsler
 import org.junit.jupiter.api.Test
@@ -30,7 +30,7 @@ class VarselbjelleRoutesTest {
             setupVarselAuthority(aktiveVarslerFromEventHandler = varsler)
             mockVarselApi(
                 varselConsumer = setupVarselConsumer(),
-                authMockInstaller = installAuthenticatedMock(LevelOfAssurance.HIGH)
+                authMockInstaller = installAuthenticatedMock(LevelOfAssurance.High)
             )
 
             client.get("/varselbjelle/varsler").apply {
@@ -67,7 +67,7 @@ class VarselbjelleRoutesTest {
             setupVarselAuthority(aktiveVarslerFromEventHandler = varsler)
             mockVarselApi(
                 varselConsumer = setupVarselConsumer(),
-                authMockInstaller = installAuthenticatedMock(LevelOfAssurance.HIGH)
+                authMockInstaller = installAuthenticatedMock(LevelOfAssurance.High)
             )
 
             client.get("/bjellevarsler").apply {
@@ -96,7 +96,7 @@ class VarselbjelleRoutesTest {
             setupVarselAuthority(expectedSpraakkodeParam = "en")
             mockVarselApi(
                 varselConsumer = setupVarselConsumer(),
-                authMockInstaller = installAuthenticatedMock(LevelOfAssurance.HIGH)
+                authMockInstaller = installAuthenticatedMock(LevelOfAssurance.High)
             )
 
             client.get("/bjellevarsler?preferert_spraak=en").apply {

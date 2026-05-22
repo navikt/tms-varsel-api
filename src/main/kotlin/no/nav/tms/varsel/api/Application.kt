@@ -3,7 +3,7 @@ package no.nav.tms.varsel.api
 import io.ktor.server.engine.connector
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
-import no.nav.tms.token.support.tokendings.exchange.TokendingsServiceBuilder
+import no.nav.tms.token.support.user.token.exchange.UserTokenExchangerBuilder
 import no.nav.tms.varsel.api.varsel.VarselConsumer
 
 fun main() {
@@ -27,7 +27,7 @@ fun main() {
                     client = httpClient,
                     varselAuthorityUrl = "http://tms-varsel-authority",
                     varselAuthorityClientId = environment.eventhandlerClientId,
-                    tokendingsService = TokendingsServiceBuilder.buildTokendingsService(),
+                    tokenExchanger = UserTokenExchangerBuilder.build(),
                 )
             )
         }

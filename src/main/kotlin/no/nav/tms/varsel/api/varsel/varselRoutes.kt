@@ -2,22 +2,20 @@ package no.nav.tms.varsel.api.varsel
 
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.ApplicationCall
-import io.ktor.server.application.call
 import io.ktor.server.request.*
 import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
 import io.ktor.server.routing.get
 import io.ktor.server.routing.post
 import kotlinx.serialization.Serializable
-import no.nav.tms.token.support.idporten.sidecar.user.IdportenUserFactory
-import no.nav.tms.token.support.tokenx.validation.user.TokenXUserFactory
+import no.nav.tms.varsel.api.user
 
 fun Route.varsel(
     varselConsumer: VarselConsumer
 ) {
     get("inaktive") {
         varselConsumer.getInaktiveVarsler(
-            userToken = call.userToken,
+            userToken = call.user.accessToken,
             preferertSpraak = call.request.preferertSpraak
         ).let { inaktiveVarsler ->
             call.respond(HttpStatusCode.OK, inaktiveVarsler)
@@ -26,7 +24,7 @@ fun Route.varsel(
 
     get("aktive") {
         varselConsumer.getAktiveVarsler(
-            userToken = call.userToken,
+            userToken = call.user.accessToken,
             preferertSpraak = call.request.preferertSpraak
         ).let { aktiveVarsler ->
             call.respond(HttpStatusCode.OK, aktiveVarsler)
@@ -35,7 +33,7 @@ fun Route.varsel(
 
     get("antall/aktive") {
         varselConsumer.getAktiveVarsler(
-            userToken = call.userToken,
+            userToken = call.user.accessToken,
             preferertSpraak = null
         ).let {
             AntallVarsler(
@@ -50,7 +48,7 @@ fun Route.varsel(
 
 
     post("beskjed/inaktiver") {
-        varselConsumer.postInaktiver(varselId = call.varselId(), userToken = call.userToken)
+        varselConsumer.postInaktiver(varselId = call.varselId(), userToken = call.user.accessToken)
         call.respond(HttpStatusCode.OK)
     }
 }
@@ -60,7 +58,7 @@ fun Route.alleVarsler(
 ) {
     get("/alle"){
         varselConsumer.getAlleVarsler(
-            userToken = call.tokenXUser.tokenString,
+            userToken = call.user.accessToken,
             preferertSpraak = call.request.preferertSpraak
         ).let { alleVarsler ->
             call.respond(HttpStatusCode.OK, alleVarsler)
@@ -73,7 +71,7 @@ fun Route.antallAktiveVarsler(
 ) {
     get("/ssr/antall/aktive"){
         varselConsumer.getAktiveVarsler(
-            userToken = call.tokenXUser.tokenString,
+            userToken = call.user.accessToken,
             preferertSpraak = null
         ).let {
             AntallVarsler(
@@ -86,10 +84,6 @@ fun Route.antallAktiveVarsler(
         }
     }
 }
-
-private val ApplicationCall.userToken get() = IdportenUserFactory.createIdportenUser(this).tokenString
-private val ApplicationCall.tokenXUser get() = TokenXUserFactory.createTokenXUser(this)
-
 
 @Serializable
 data class AntallVarsler(val beskjeder: Int, val oppgaver: Int, val innbokser: Int)

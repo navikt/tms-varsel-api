@@ -6,7 +6,6 @@ import io.ktor.client.plugins.HttpTimeout
 import io.ktor.http.HttpStatusCode
 import io.ktor.serialization.jackson.*
 import io.ktor.server.application.Application
-import io.ktor.server.application.call
 import io.ktor.server.application.install
 import io.ktor.server.auth.*
 import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
@@ -18,10 +17,10 @@ import io.ktor.server.testing.ApplicationTestBuilder
 import io.ktor.server.testing.TestApplicationBuilder
 import io.mockk.coEvery
 import io.mockk.mockk
-import no.nav.tms.token.support.idporten.sidecar.mock.LevelOfAssurance
-import no.nav.tms.token.support.idporten.sidecar.mock.idPortenMock
-import no.nav.tms.token.support.tokendings.exchange.TokendingsService
-import no.nav.tms.token.support.tokenx.validation.mock.tokenXMock
+import no.nav.tms.token.support.user.token.exchange.UserTokenExchanger
+import no.nav.tms.token.support.user.token.verification.Issuer
+import no.nav.tms.token.support.user.token.verification.LevelOfAssurance
+import no.nav.tms.token.support.user.token.verificaton.mock.userTokenMock
 import no.nav.tms.varsel.api.varsel.VarselConsumer
 import no.nav.tms.varsel.api.varsel.VarselType
 import java.time.ZoneOffset
@@ -141,7 +140,7 @@ fun ApplicationTestBuilder.setupVarselAuthority(
 private val ApplicationRequest.preferertSpraak get() = queryParameters["preferert_spraak"]?.lowercase()
 
 fun ApplicationTestBuilder.setupVarselConsumer(
-    tokendingsService: TokendingsService = mockk<TokendingsService>().apply {
+    tokenExchanger: UserTokenExchanger = mockk<UserTokenExchanger>().apply {
         coEvery { exchangeToken(any(), "test:varsel-authority") } returns "authorityToken"
     }
 ) = VarselConsumer(
@@ -154,31 +153,22 @@ fun ApplicationTestBuilder.setupVarselConsumer(
     },
     varselAuthorityUrl = varselAuthorityTestUrl,
     varselAuthorityClientId = "test:varsel-authority",
-    tokendingsService = tokendingsService,
+    tokenExchanger = tokenExchanger,
 
     )
 
 fun installAuthenticatedMock(
-    levelOfAssurance: LevelOfAssurance,
-    authenticated: Boolean = true
+    userLoa: LevelOfAssurance
 ): Application.() -> Unit = {
     authentication {
-        idPortenMock {
-            alwaysAuthenticated = authenticated
-            setAsDefault = true
-            staticLevelOfAssurance = levelOfAssurance
-            staticUserPid = "12345"
-        }
-        tokenXMock {
-            setAsDefault = false
-            alwaysAuthenticated = authenticated
-            staticLevelOfAssurance = levelOfAssurance.toTokenxLoa()
-            staticUserPid = "12345"
+        userTokenMock {
+            levelOfAssurance = LevelOfAssurance.Substantial
+            configureIssuers(Issuer.IdPorten, Issuer.Tokenx)
+            enableDefaultAuthentication {
+                tokenIdent = "12345"
+                tokenIssuer = Issuer.IdPorten
+                tokenLoa = userLoa
+            }
         }
     }
-}
-
-private fun LevelOfAssurance.toTokenxLoa() = when(this) {
-    LevelOfAssurance.SUBSTANTIAL -> no.nav.tms.token.support.tokenx.validation.mock.LevelOfAssurance.SUBSTANTIAL
-    LevelOfAssurance.HIGH -> no.nav.tms.token.support.tokenx.validation.mock.LevelOfAssurance.HIGH
 }
