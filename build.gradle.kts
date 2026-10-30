@@ -1,9 +1,9 @@
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 
 plugins {
-    kotlin("jvm").version(Kotlin.version)
+    kotlin("jvm").version(libs.versions.kotlin)
 
-    id(TmsJarBundling.plugin)
+    alias(libs.plugins.tms.jarBundling)
 
     application
 }
@@ -23,36 +23,26 @@ repositories {
 }
 
 dependencies {
-    implementation(JacksonDatatype.datatypeJsr310)
-    implementation(JacksonDatatype.moduleKotlin)
-    implementation(Ktor.Client.core)
-    implementation(Ktor.Client.apache5)
-    implementation(Ktor.Client.contentNegotiation)
-    implementation(Ktor.Serialization.jackson)
-    implementation(Ktor.Server.core)
-    implementation(Ktor.Server.netty)
-    implementation(Ktor.Server.auth)
-    implementation(Ktor.Server.contentNegotiation)
-    implementation(Ktor.Server.statusPages)
-    implementation(Ktor.Server.metricsMicrometer)
-    implementation(Ktor.Server.defaultHeaders)
-    implementation(Ktor.Server.cors)
-    implementation(TmsKtorTokenSupport.userTokenExchange)
-    implementation(TmsKtorTokenSupport.userTokenVerification)
-    implementation(KotlinLogging.logging)
-    implementation(Logstash.logbackEncoder)
-    implementation(KtorClientEncoding.clientEncoding)
-    implementation(TmsCommonLib.metrics)
-    implementation(TmsCommonLib.teamLogger)
-    implementation(TmsCommonLib.utils)
+    implementation(libs.bundles.jackson)
+    implementation(libs.bundles.ktorClient)
+    implementation(libs.bundles.ktorServer)
+    implementation(libs.bundles.logback)
 
-    testImplementation(JunitPlatform.launcher)
-    testImplementation(JunitJupiter.engine)
-    testImplementation(Kotest.assertionsCore)
-    testImplementation(Kotest.runnerJunit5)
-    testImplementation(Ktor.Test.serverTestHost)
-    testImplementation(TmsKtorTokenSupport.userTokenVerificationMock)
-    testImplementation(Mockk.mockk)
+    implementation(libs.kotlinLogging)
+    implementation(libs.ktor.serialization.jackson)
+    implementation(libs.ktor.server.cors)
+    implementation(libs.ktor.server.defaultHeaders)
+    implementation(libs.tms.ktorTokenSupport.userToken.verification)
+    implementation(libs.tms.ktorTokenSupport.userToken.exchange)
+    implementation(libs.tms.commonLib.metrics)
+    implementation(libs.tms.commonLib.teamLogger)
+    implementation(libs.tms.commonLib.utils)
+
+    testImplementation(libs.bundles.junit)
+    testImplementation(libs.bundles.kotest)
+    testImplementation(libs.ktor.test.server)
+    testImplementation(libs.mockk)
+    testImplementation(libs.tms.ktorTokenSupport.userToken.verificationMock)
 }
 
 application {
