@@ -1,9 +1,8 @@
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 
 plugins {
-    kotlin("jvm").version(libs.versions.kotlin)
-
-    alias(libs.plugins.tms.jarBundling)
+    alias(managed.plugins.kotlin)
+    alias(managed.plugins.tms.jarBundling)
 
     application
 }
@@ -23,26 +22,29 @@ repositories {
 }
 
 dependencies {
-    implementation(libs.bundles.jackson)
-    implementation(libs.bundles.ktorClient)
-    implementation(libs.bundles.ktorServer)
-    implementation(libs.bundles.logback)
+    implementation(managed.bundles.jackson)
+    implementation(managed.bundles.ktorClient)
+    implementation(managed.bundles.ktorServer)
 
-    implementation(libs.kotlinLogging)
-    implementation(libs.ktor.serialization.jackson)
-    implementation(libs.ktor.server.cors)
-    implementation(libs.ktor.server.defaultHeaders)
-    implementation(libs.tms.ktorTokenSupport.userToken.verification)
-    implementation(libs.tms.ktorTokenSupport.userToken.exchange)
-    implementation(libs.tms.commonLib.metrics)
-    implementation(libs.tms.commonLib.teamLogger)
-    implementation(libs.tms.commonLib.utils)
+    runtimeOnly(managed.bundles.logback)
 
-    testImplementation(libs.bundles.junit)
-    testImplementation(libs.bundles.kotest)
-    testImplementation(libs.ktor.test.server)
-    testImplementation(libs.mockk)
-    testImplementation(libs.tms.ktorTokenSupport.userToken.verificationMock)
+    implementation(managed.kotlinLogging)
+    implementation(managed.ktor.serialization.jackson)
+    implementation(managed.ktor.server.cors)
+    implementation(managed.tms.ktorTokenSupport.userToken.verification)
+    implementation(managed.tms.ktorTokenSupport.userToken.exchange)
+    implementation(managed.tms.commonLib.metrics)
+    implementation(managed.tms.commonLib.teamLogger)
+    implementation(managed.tms.commonLib.utils)
+
+    testRuntimeOnly(managed.junit.launcher)
+    testRuntimeOnly(managed.junit.engine)
+
+    testImplementation(managed.junit.api)
+    testImplementation(managed.kotest.assertion)
+    testImplementation(managed.ktor.test.server)
+    testImplementation(managed.mockk)
+    testImplementation(managed.tms.ktorTokenSupport.userToken.verificationMock)
 }
 
 application {
